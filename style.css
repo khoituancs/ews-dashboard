@@ -266,7 +266,7 @@ table.data-grid tr.clickable:hover td { background: #1c1c1c; }
 /* Chart panels, các điểm dữ liệu có thể nhấn để xem định nghĩa/công thức */
 .chart-panel { min-height: 320px; cursor: pointer; }
 .matrix-panel { grid-column: 2; grid-row: 1; }
-.radar-panel { grid-column: 3; grid-row: 1; }
+.trend-panel { grid-column: 3; grid-row: 1; }
 .heatmap-panel { grid-column: 2 / 4; grid-row: 2; min-height: 300px; }
 
 /* Data table */
@@ -433,11 +433,12 @@ footer.legend .item.hint { color: var(--orange-dim); font-style: italic; }
 .info-ind-list li:hover { background: #161616; color: var(--orange); }
 .info-link { color: var(--orange); cursor: pointer; text-decoration: underline dotted; text-underline-offset: 2px; }
 .info-link:hover { color: var(--text); }
+.info-chart { height: 150px; margin: 4px 0 4px; }
 
 /* Responsive */
 @media (max-width: 1100px) {
   main { grid-template-columns: 1fr; }
-  .ewi-panel, .matrix-panel, .radar-panel, .heatmap-panel, .table-panel { grid-column: 1; grid-row: auto; }
+  .ewi-panel, .matrix-panel, .trend-panel, .heatmap-panel, .table-panel { grid-column: 1; grid-row: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

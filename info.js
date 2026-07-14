@@ -55,6 +55,8 @@ function buildIndicatorInfoHTML(gKey, indId) {
       ${ranges.map((t, i) => `<div class="info-th-row" style="color:${TIER_COLORS[i]}">${t}</div>`).join("")}
     </div>
     ${currentBlock}
+    <div class="info-formula-label" style="margin-top:12px;">DIỄN BIẾN ĐIỂM CHUẨN HOÁ THEO THỜI GIAN</div>
+    <div id="info-ind-chart" class="info-chart"></div>
     <div class="info-meta">Thuộc nhóm <span class="info-link" data-group="${gKey}">${group.code} · ${group.name}</span> &nbsp;·&nbsp; Mã chỉ báo <strong>${group.code}${indId}</strong></div>
   `;
 }
@@ -173,6 +175,41 @@ function showIndicatorInfo(gKey, indId) {
   const group = RISK_GROUPS[gKey];
   const ind = group.indicators.find(i => i.id === indId);
   openInfoModal("CHỈ BÁO", `${group.code}${indId} · ${ind.name}`, buildIndicatorInfoHTML(gKey, indId));
+  renderIndicatorTrendChart(gKey, indId);
+}
+
+// Vẽ biểu đồ đường điểm chuẩn hoá của 1 chỉ báo theo lịch sử đã tích luỹ (biến history trong app.js)
+function renderIndicatorTrendChart(gKey, indId) {
+  const container = document.getElementById("info-ind-chart");
+  if (!container || typeof Plotly === "undefined" || typeof history === "undefined") return;
+  const ind = RISK_GROUPS[gKey].indicators.find(i => i.id === indId);
+  if (!history.length) return;
+
+  const xs = history.map(h => h.t);
+  const ys = history.map(h => normalizeIndicator(h.raw[gKey][indId], ind.thresholds, ind.inverse));
+  const trace = [{
+    x: xs, y: ys,
+    mode: history.length > 1 ? "lines+markers" : "markers",
+    type: "scatter",
+    line: { color: "#FF9900", width: 2 },
+    marker: { color: "#FF9900", size: 4 },
+    hovertemplate: "%{y:.1f}<extra></extra>",
+  }];
+  const layout = {
+    paper_bgcolor: "#0a0a0a",
+    plot_bgcolor: "#0a0a0a",
+    font: { family: "IBM Plex Mono, Consolas, monospace", color: "#E8E8E8", size: 10 },
+    margin: { t: 6, l: 32, r: 8, b: 26 },
+    xaxis: { type: "date", tickformat: "%H:%M:%S", gridcolor: "#222", color: "#8a8a8a" },
+    yaxis: { range: [0, 100], gridcolor: "#222", color: "#8a8a8a" },
+    shapes: [
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 0, y1: 25, fillcolor: "#00C805", opacity: 0.08, line: { width: 0 } },
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 25, y1: 50, fillcolor: "#FFCC00", opacity: 0.08, line: { width: 0 } },
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 50, y1: 75, fillcolor: "#FF9900", opacity: 0.08, line: { width: 0 } },
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 75, y1: 100, fillcolor: "#FF3B30", opacity: 0.08, line: { width: 0 } },
+    ],
+  };
+  Plotly.newPlot("info-ind-chart", trace, layout, { displayModeBar: false, responsive: true });
 }
 
 function showGroupInfo(gKey) {
