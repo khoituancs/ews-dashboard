@@ -37,38 +37,57 @@ function renderMatrix(msi, fci) {
   Plotly.newPlot("matrix-msi-fci", trace, layout, PLOT_CONFIG);
 }
 
-function renderRadar(groupScores) {
+// Màu nhận diện riêng cho từng nhóm rủi ro trên biểu đồ xu hướng, tách biệt
+// với 4 màu mức cảnh báo (xanh/vàng/cam/đỏ) để tránh nhầm lẫn ý nghĩa
+const GROUP_COLORS = {
+  interest_rate: "#3399FF",
+  fx_risk: "#FF33CC",
+  capital_flow: "#9966FF",
+  asset_price: "#33CCFF",
+  concentration: "#CCCCCC",
+  liquidity: "#66FFAA",
+  sentiment: "#FF6699",
+};
+
+// history: mảng { t: Date, groupScores: {...}, raw: {...} }, tích luỹ theo thời gian thực
+function renderGroupTrend(history) {
   const keys = Object.keys(RISK_GROUPS);
-  const labels = keys.map(k => RISK_GROUPS[k].code);
-  const values = keys.map(k => groupScores[k]);
-  const trace = [{
-    type: "scatterpolar",
-    r: [...values, values[0]],
-    theta: [...labels, labels[0]],
-    fill: "toself",
-    fillcolor: "rgba(255,153,0,0.25)",
-    line: { color: "#FF9900", width: 2 },
-    marker: { color: "#FF9900", size: 5 },
-  }];
+  const xs = history.map(h => h.t);
+  const traces = keys.map(k => ({
+    x: xs,
+    y: history.map(h => h.groupScores[k]),
+    mode: history.length > 1 ? "lines+markers" : "markers",
+    type: "scatter",
+    name: RISK_GROUPS[k].code,
+    line: { color: GROUP_COLORS[k], width: 2 },
+    marker: { color: GROUP_COLORS[k], size: 4 },
+    hovertemplate: `${RISK_GROUPS[k].code} %{y:.1f}<extra></extra>`,
+  }));
   const layout = {
     ...PLOT_BASE_LAYOUT,
-    title: { text: "ĐIỂM 7 NHÓM RỦI RO", font: { ...PLOT_FONT, size: 12 } },
-    polar: {
-      bgcolor: "#0a0a0a",
-      radialaxis: { visible: true, range: [0, 100], gridcolor: "#222", color: "#8a8a8a" },
-      angularaxis: { gridcolor: "#222", color: "#E8E8E8" },
-    },
-    showlegend: false,
+    title: { text: "XU HƯỚNG 7 NHÓM RỦI RO THEO THỜI GIAN", font: { ...PLOT_FONT, size: 12 } },
+    xaxis: { type: "date", tickformat: "%H:%M:%S", gridcolor: "#222", color: "#8a8a8a" },
+    yaxis: { title: "Điểm, 0 đến 100", range: [0, 100], gridcolor: "#222", color: "#8a8a8a" },
+    shapes: [
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 0, y1: 25, fillcolor: "#00C805", opacity: 0.06, line: { width: 0 } },
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 25, y1: 50, fillcolor: "#FFCC00", opacity: 0.06, line: { width: 0 } },
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 50, y1: 75, fillcolor: "#FF9900", opacity: 0.06, line: { width: 0 } },
+      { type: "rect", xref: "paper", x0: 0, x1: 1, y0: 75, y1: 100, fillcolor: "#FF3B30", opacity: 0.06, line: { width: 0 } },
+    ],
+    legend: { orientation: "h", font: { size: 9 }, y: -0.22 },
+    margin: { t: 30, l: 45, r: 10, b: 55 },
+    showlegend: true,
   };
-  Plotly.newPlot("radar-groups", trace, layout, PLOT_CONFIG).then(gd => {
+  Plotly.newPlot("trend-groups", traces, layout, PLOT_CONFIG).then(gd => {
     gd.on("plotly_click", (data) => {
       const pt = data.points[0];
-      const key = keys[pt.pointNumber % keys.length];
-      if (typeof showGroupInfo === "function") showGroupInfo(key);
+      const key = keys[pt.curveNumber];
+      if (key && typeof showGroupInfo === "function") showGroupInfo(key);
     });
   });
 }
 
+// Ma trận nhanh 7 nhóm × 4 chỉ báo tại thời điểm hiện tại, mỗi ô ghi mã ký hiệu chỉ báo
 function renderHeatmap(rawValues) {
   const groups = Object.keys(RISK_GROUPS);
   const z = groups.map(g => RISK_GROUPS[g].indicators.map(ind =>
@@ -76,13 +95,18 @@ function renderHeatmap(rawValues) {
   ));
   const y = groups.map(g => `${RISK_GROUPS[g].code}  ${RISK_GROUPS[g].name}`);
   const x = ["(a)", "(b)", "(c)", "(d)"];
-  const text = groups.map(g => RISK_GROUPS[g].indicators.map(ind => {
+  const cellLabels = groups.map(g => RISK_GROUPS[g].indicators.map(ind => `${RISK_GROUPS[g].code}${ind.id}`));
+  const hoverText = groups.map(g => RISK_GROUPS[g].indicators.map(ind => {
     const v = rawValues[g][ind.id];
-    return `${ind.name}<br>${v.toFixed(1)} ${ind.unit}`;
+    return `${RISK_GROUPS[g].code}${ind.id} · ${ind.name}<br>${v.toFixed(2)} ${ind.unit}`;
   }));
   const trace = [{
     z, x, y, type: "heatmap",
-    text, hoverinfo: "text",
+    text: cellLabels,
+    texttemplate: "%{text}",
+    textfont: { size: 10, color: "#000" },
+    customdata: hoverText,
+    hovertemplate: "%{customdata}<extra></extra>",
     colorscale: [
       [0, "#00C805"], [0.25, "#00C805"],
       [0.25, "#FFCC00"], [0.5, "#FFCC00"],
@@ -95,7 +119,7 @@ function renderHeatmap(rawValues) {
   }];
   const layout = {
     ...PLOT_BASE_LAYOUT,
-    title: { text: "CHI TIẾT 28 CHỈ BÁO", font: { ...PLOT_FONT, size: 12 } },
+    title: { text: "HEATMAP (CHI TIẾT 28 CHỈ BÁO)", font: { ...PLOT_FONT, size: 12 } },
     margin: { t: 30, l: 200, r: 20, b: 30 },
     xaxis: { color: "#8a8a8a" },
     yaxis: { color: "#E8E8E8", automargin: true },
