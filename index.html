@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIFC EWS // Hệ thống cảnh báo sớm rủi ro thị trường</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="ticker-track"></div>
+  </div>
+
+  <header class="top">
+    <div class="brand">
+      <span class="logo">VIFC EWS</span>
+      <span class="sub">Hệ thống cảnh báo sớm rủi ro thị trường</span>
+    </div>
+    <div class="header-right">
+      <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+      <div class="clock"><span class="date" id="clock-date"></span><span id="clock-time"></span></div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label for="scenario">Kịch bản</label>
+      <select id="scenario">
+        <option value="binh_thuong">Bình thường</option>
+        <option value="soc_lai_suat">Sốc lãi suất đột ngột</option>
+        <option value="soc_ty_gia">Sốc tỷ giá đột ngột</option>
+        <option value="rut_von_ngoai">Rút vốn ngoại ồ ạt</option>
+        <option value="bong_bong_tai_san">Bong bóng tài sản xì hơi</option>
+        <option value="khung_hoang_thanh_khoan">Khủng hoảng thanh khoản liên NH</option>
+        <option value="tap_trung_tin_dung">Rủi ro tập trung tín dụng</option>
+        <option value="hoang_loan_tam_ly">Hoảng loạn tâm lý đám đông</option>
+        <option value="lay_lan_khu_vuc">Lây lan khủng hoảng khu vực</option>
+        <option value="khung_hoang_toan_dien">Khủng hoảng toàn diện</option>
+        <option value="phuc_hoi_sau_khung_hoang">Phục hồi sau khủng hoảng</option>
+        <option value="tang_truong_nong">Tăng trưởng nóng, quá nhiệt</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label for="intensity">Cường độ tùy chỉnh</label>
+      <input type="range" id="intensity" min="0" max="100" value="15">
+      <span id="intensity-val">15%</span>
+    </div>
+    <button class="btn" id="btn-refresh">Cập nhật ngay</button>
+    <button class="btn" id="btn-live">Tạm dừng LIVE</button>
+    <div class="scenario-desc" id="scenario-desc"></div>
+  </div>
+
+  <main>
+    <section class="panel ewi-panel">
+      <div class="panel-title">VIFC-EWI <span class="tag" id="ewi-updated">--:--:--</span></div>
+      <div class="ewi-number clickable" id="ewi-number" tabindex="0" role="button" aria-label="Xem định nghĩa VIFC-EWI">--</div>
+      <div class="ewi-tier clickable" id="ewi-tier" tabindex="0" role="button" aria-label="Xem định nghĩa VIFC-EWI">--</div>
+      <div class="ewi-sub">Chỉ số cảnh báo tổng hợp, thang 0 đến 100</div>
+      <div class="mini-metrics">
+        <div class="mini-metric clickable" id="msi-metric" tabindex="0" role="button" aria-label="Xem định nghĩa MSI">
+          <div class="label">MSI</div>
+          <div class="value" id="msi-value" style="color:#FFCC00">--</div>
+        </div>
+        <div class="mini-metric clickable" id="fci-metric" tabindex="0" role="button" aria-label="Xem định nghĩa FCI">
+          <div class="label">FCI</div>
+          <div class="value" id="fci-value" style="color:#FF9900">--</div>
+        </div>
+      </div>
+      <ul class="group-list" id="group-list"></ul>
+    </section>
+
+    <section class="panel chart-panel matrix-panel" id="matrix-msi-fci"></section>
+    <section class="panel chart-panel radar-panel" id="radar-groups"></section>
+    <section class="panel chart-panel heatmap-panel" id="heatmap-indicators"></section>
+
+    <section class="panel table-panel">
+      <div class="panel-title">BẢNG CHI TIẾT 28 CHỈ BÁO <span class="tag">MONITOR</span></div>
+      <div style="max-height:340px; overflow-y:auto;">
+        <table class="data-grid">
+          <thead>
+            <tr>
+              <th>Mã</th><th>Nhóm</th><th>Chỉ báo</th><th>Giá trị</th><th>Đơn vị</th><th>Điểm</th><th>Mức</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="legend">
+    <div class="item"><span class="dot" style="background:#00C805"></span>Xanh, an toàn (0 đến 25)</div>
+    <div class="item"><span class="dot" style="background:#FFCC00"></span>Vàng, theo dõi (25 đến 50)</div>
+    <div class="item"><span class="dot" style="background:#FF9900"></span>Cam, cảnh báo (50 đến 75)</div>
+    <div class="item"><span class="dot" style="background:#FF3B30"></span>Đỏ, khẩn cấp (75 đến 100)</div>
+    <div class="item hint">Nhấn vào EWI, MSI, FCI, tên nhóm hoặc dòng chỉ báo để xem định nghĩa và công thức tính</div>
+    <div class="item" style="margin-left:auto; color:#555;">VIFC. Dự án 13. Bảng điều khiển minh họa, dữ liệu mô phỏng</div>
+  </footer>
+
+  <div class="info-modal-overlay" id="info-modal-overlay">
+    <div class="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+      <div class="info-modal-head">
+        <span class="info-modal-tag" id="info-modal-tag">CHỈ BÁO</span>
+        <button class="info-modal-close" id="info-modal-close" aria-label="Đóng">&times;</button>
+      </div>
+      <h2 class="info-modal-title" id="info-modal-title">--</h2>
+      <div class="info-modal-body" id="info-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="calculations.js"></script>
+  <script src="charts.js"></script>
+  <script src="app.js"></script>
+  <script src="info.js"></script>
+</body>
+</html>
