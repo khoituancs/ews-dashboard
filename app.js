@@ -39,15 +39,25 @@ function updateClock() {
 // ---------- Ticker tape ----------
 function buildTicker(groupScores) {
   const track = document.getElementById("ticker-track");
-  const items = Object.keys(RISK_GROUPS).map(k => {
+  const wrap = track.parentElement;
+  const singleSet = Object.keys(RISK_GROUPS).map(k => {
     const g = RISK_GROUPS[k];
     const score = groupScores[k];
     const tier = scoreToTier(score);
     const arrow = score >= 50 ? "▲" : "▼";
     return `<span class="ticker-item" style="background:${tier.color}">${g.code} &nbsp; <span class="val">${score.toFixed(1)}</span> &nbsp; ${arrow}</span>`;
   }).join("");
+
+  // Đo bề rộng một lượt 7 chỉ báo để tính số lần lặp cần thiết, đảm bảo mỗi
+  // nửa track luôn rộng hơn khung hiển thị. Nếu không, khi màn hình rộng
+  // hơn một lượt, đoạn cuộn sẽ lộ ra khoảng đen do thiếu nội dung để lấp đầy.
+  track.innerHTML = singleSet;
+  const singleWidth = track.scrollWidth || 1;
+  const wrapWidth = wrap.clientWidth || 1;
+  const repeats = Math.max(1, Math.ceil(wrapWidth / singleWidth));
+  const half = singleSet.repeat(repeats);
   // Lặp lại 2 lần để cuộn liên tục không đứt đoạn
-  track.innerHTML = items + items;
+  track.innerHTML = half + half;
 }
 
 // ---------- Danh sách nhóm bên trái ----------
