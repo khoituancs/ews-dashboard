@@ -8,6 +8,24 @@ let liveInterval = null;
 let isLive = true;
 let prevScores = {}; // để so sánh tăng giảm cho hiệu ứng flash
 
+// ---------- Lịch sử điểm số, phục vụ biểu đồ xu hướng theo thời gian ----------
+const HISTORY_MAX = 60;
+const HISTORY_MIN_GAP_MS = 200; // tránh dồn quá nhiều điểm khi kéo nhanh thanh trượt
+let history = [];
+let lastHistoryPush = 0;
+
+function pushHistory(groupScores, raw) {
+  const now = Date.now();
+  if (now - lastHistoryPush < HISTORY_MIN_GAP_MS) return;
+  lastHistoryPush = now;
+  history.push({
+    t: new Date(now),
+    groupScores: { ...groupScores },
+    raw: JSON.parse(JSON.stringify(raw)),
+  });
+  if (history.length > HISTORY_MAX) history.shift();
+}
+
 // ---------- Đồng hồ ----------
 function updateClock() {
   const now = new Date();
@@ -93,11 +111,13 @@ function updateDashboard(newRaw) {
   document.getElementById("fci-value").textContent = fci.toFixed(1);
   document.getElementById("ewi-updated").textContent = new Date().toLocaleTimeString("vi-VN");
 
+  pushHistory(groupScores, currentRaw);
+
   buildTicker(groupScores);
   buildGroupList(groupScores);
   buildTable(currentRaw);
   renderMatrix(msi, fci);
-  renderRadar(groupScores);
+  renderGroupTrend(history);
   renderHeatmap(currentRaw);
 }
 
