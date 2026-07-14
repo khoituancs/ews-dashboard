@@ -2,8 +2,6 @@
 
 Bảng điều khiển minh họa cho **Hệ thống cảnh báo sớm rủi ro thị trường (Early Warning System)** của VIFC — theo dõi 28 chỉ báo thuộc 7 nhóm rủi ro, tổng hợp thành hai chỉ số MSI/FCI và chỉ số cảnh báo tổng hợp VIFC-EWI, với dữ liệu mô phỏng theo thời gian thực.
 
-Giao diện theo phong cách Bloomberg Terminal: nền đen, font monospace, tông cam/xanh/vàng/đỏ theo 4 mức cảnh báo.
-
 ## Tính năng
 
 - **28 chỉ báo / 7 nhóm rủi ro**: lãi suất, tỷ giá, dòng vốn, giá tài sản, tập trung tín dụng, thanh khoản, tâm lý nhà đầu tư.
