@@ -27,43 +27,6 @@ vifc-dasboard-1/
 
 Không có bước build hay phụ thuộc ngoài (dependency) nào cần cài đặt — toàn bộ là HTML/CSS/JavaScript thuần, chỉ dùng [Plotly.js](https://plotly.com/javascript/) tải qua CDN trong `index.html`.
 
-## Chạy thử ở máy local
-
-### Cách 1: Mở trực tiếp
-
-Nhấp đúp vào `index.html`. Một số trình duyệt (Chrome) có thể chặn việc các file JS load lẫn nhau khi mở trực tiếp bằng `file://`; nếu gặp màn hình trắng, dùng Cách 2 hoặc Cách 3.
-
-### Cách 2: VS Code + Live Server
-
-1. Mở thư mục dự án bằng VS Code.
-2. Cài extension **Live Server** (Ritwick Dey).
-3. Nhấp chuột phải vào `index.html`, chọn **Open with Live Server**.
-
-### Cách 3: Python có sẵn
-
-```bash
-python3 -m http.server 8000
-```
-
-Sau đó mở trình duyệt tại `http://localhost:8000`.
-
-## Triển khai lên GitHub Pages
-
-```bash
-git init
-git add .
-git commit -m "Khoi tao dashboard canh bao som VIFC"
-git remote add origin https://github.com/<ten-tai-khoan>/<ten-repo>.git
-git branch -M main
-git push -u origin main
-```
-
-Trên GitHub: vào **Settings → Pages**, ở mục Source chọn nhánh `main` và thư mục `/ (root)`, bấm **Save**. Sau khoảng một phút, dashboard sẽ có địa chỉ công khai dạng:
-
-```
-https://<ten-tai-khoan>.github.io/<ten-repo>/
-```
-
 ## Cách dùng dashboard
 
 - **Chọn kịch bản**: chọn 1 trong 12 kịch bản dựng sẵn; mỗi kịch bản có một hồ sơ cường độ riêng cho 7 nhóm rủi ro.
