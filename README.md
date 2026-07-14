@@ -1,5 +1,8 @@
 # VIFC EWS Dashboard
 
+## Live Demo
+[![View Dashboard]](https://khoituancs.github.io/ews-dashboard/)
+
 Bảng điều khiển minh họa cho **Hệ thống cảnh báo sớm rủi ro thị trường (Early Warning System)** của VIFC — theo dõi 28 chỉ báo thuộc 7 nhóm rủi ro, tổng hợp thành hai chỉ số MSI/FCI và chỉ số cảnh báo tổng hợp VIFC-EWI, với dữ liệu mô phỏng theo thời gian thực.
 
 ## Tính năng
