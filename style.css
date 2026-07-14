@@ -38,7 +38,7 @@ html, body {
 
 /* ---------- Ticker tape trên cùng ---------- */
 .ticker-wrap {
-  background: var(--orange);
+  background: #000;
   height: 28px;
   overflow: hidden;
   position: relative;
@@ -61,8 +61,6 @@ html, body {
   border-right: 1px solid rgba(0,0,0,0.25);
 }
 .ticker-item .val { font-weight: 600; }
-.ticker-item .up { color: #0a4d02; }
-.ticker-item .down { color: #5c0000; }
 @keyframes ticker-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }

@@ -44,8 +44,7 @@ function buildTicker(groupScores) {
     const score = groupScores[k];
     const tier = scoreToTier(score);
     const arrow = score >= 50 ? "▲" : "▼";
-    const cls = score >= 50 ? "down" : "up"; // score cao la xau, dung mau do/den dam
-    return `<span class="ticker-item">${g.code} &nbsp; <span class="val">${score.toFixed(1)}</span> &nbsp; <span class="${cls}">${arrow}</span> &nbsp; ${tier.label}</span>`;
+    return `<span class="ticker-item" style="background:${tier.color}">${g.code} &nbsp; <span class="val">${score.toFixed(1)}</span> &nbsp; ${arrow}</span>`;
   }).join("");
   // Lặp lại 2 lần để cuộn liên tục không đứt đoạn
   track.innerHTML = items + items;
