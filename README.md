@@ -1,14 +1,14 @@
-# VIFC EWS Dashboard
+# EWS Dashboard
 
 ## Live Demo
 [View Dashboard](https://khoituancs.github.io/ews-dashboard/)
 
-Bảng điều khiển minh họa cho **Hệ thống cảnh báo sớm rủi ro thị trường (Early Warning System)** của VIFC — theo dõi 28 chỉ báo thuộc 7 nhóm rủi ro, tổng hợp thành hai chỉ số MSI/FCI và chỉ số cảnh báo tổng hợp VIFC-EWI, với dữ liệu mô phỏng theo thời gian thực.
+Bảng điều khiển minh họa cho **Hệ thống cảnh báo sớm rủi ro thị trường (Early Warning System)** — theo dõi 28 chỉ báo thuộc 7 nhóm rủi ro, tổng hợp thành hai chỉ số MSI/FCI và chỉ số cảnh báo tổng hợp EWI, với dữ liệu mô phỏng theo thời gian thực.
 
 ## Tính năng
 
 - **28 chỉ báo / 7 nhóm rủi ro**: lãi suất, tỷ giá, dòng vốn, giá tài sản, tập trung tín dụng, thanh khoản, tâm lý nhà đầu tư.
-- **Chỉ số tổng hợp**: MSI (căng thẳng tức thời), FCI (điều kiện nền), VIFC-EWI (cảnh báo tổng hợp 0–100).
+- **Chỉ số tổng hợp**: MSI (căng thẳng tức thời), FCI (điều kiện nền), EWI (cảnh báo tổng hợp 0–100).
 - **12 kịch bản mô phỏng** dựng sẵn (bình thường, sốc lãi suất, sốc tỷ giá, rút vốn ngoại, bong bóng tài sản, khủng hoảng thanh khoản, khủng hoảng toàn diện...) và một thanh trượt để tự chỉnh cường độ.
 - **Chế độ LIVE**: dữ liệu tự dao động nhẹ mỗi 3 giây để mô phỏng cảm giác thời gian thực.
 - **Click để xem định nghĩa & công thức**: nhấn vào EWI, MSI, FCI, tên nhóm rủi ro, hoặc bất kỳ chỉ báo nào (trong bảng, heatmap, biểu đồ xu hướng) để mở hộp thoại giải thích định nghĩa, công thức chuẩn hoá, ngưỡng cảnh báo và diễn biến theo thời gian của chỉ báo đó.
